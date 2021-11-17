@@ -1,0 +1,14 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <div>
+        <div class="row">
+            <div class="lot-image">{{ lot.image }}</div>
+            <div><h2>{{ lot.title }}</h2></div>
+        </div>
+        
+        <div>{{ lot.description }}</div>
+        <div>{{ lot.min_amount}}</div>
+    </div>
+    TODO
+{% endblock %}

@@ -1,14 +1,17 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
 from django.shortcuts import render
 from django.urls import reverse
+from django.core.exceptions import ObjectDoesNotExist
 
-from .models import User
+from .models import User, Lot
 
 
 def index(request):
-    return render(request, "auctions/index.html")
+    return render(request, "auctions/index.html", {
+        'lots': Lot.objects.filter(state=1).all()
+    })
 
 
 def login_view(request):
@@ -61,3 +64,12 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "auctions/register.html")
+
+def lot(request, lot_id):
+    try:
+        lot = Lot.objects.get(pk=lot_id)
+    except ObjectDoesNotExist:
+        return HttpResponseNotFound('<h1>Page not found</h1>')
+    return render(request, "auctions/lot.html", {
+        "lot": lot
+    })

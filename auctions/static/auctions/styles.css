@@ -1,3 +1,24 @@
 body {
     padding: 10px;
 }
+
+.lots {
+    margin: 0;
+}
+  
+.item {
+    border: 1px solid blue;
+    border-radius: 5px;
+    background-color: rgb(222, 243, 255);
+    padding: 10px;
+    height: 400px;
+    cursor: pointer;
+}
+
+.item-image {
+    
+}
+
+.cell {
+    padding: 3px;
+}

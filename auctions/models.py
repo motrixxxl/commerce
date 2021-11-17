@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+from .utils import *
 
 class User(AbstractUser):
     pass
@@ -10,7 +11,7 @@ class Currency(models.Model):
     name = models.CharField(max_length=3)
 
     def __str__(self):
-        return f'{self.name}'
+        return f"{self.name}"
 
 
 class Category(models.Model):
@@ -25,12 +26,15 @@ class Lot(models.Model):
     title = models.CharField(max_length=256)
     description = models.TextField()
     min_amount = models.DecimalField(max_digits=6, decimal_places=2)
-    currency = models.OneToOneField(Currency, on_delete=models.CASCADE, default='USD')
+    currency = models.ForeignKey(Currency, on_delete=models.CASCADE, default='USD')
     image = models.CharField(max_length=256)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='lots')
     state = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def short_description(self):
+        return truncate(self.description, 150, '')
 
     def __str__(self): 
         return f"{self.title} | {self.category}"

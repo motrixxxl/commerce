@@ -3,5 +3,17 @@
 {% block body %}
     <h2>Active Listings</h2>
 
+    <div class="row lots">
+    {% for lot in lots %}
+        <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12 cell">
+            <div class="item" data-id="{{ lot.id }}">
+                <div class="item-image">{{ lot.image }}</div>
+                <div><h3>{{ lot.title }}</h1></div>
+                <div>{{ lot.short_description }}<a class="link" href="//{{ lot.id }}">...</a></div>
+                <div>{{ lot.min_amount}}</div>
+            </div>
+        </div>
+    {% endfor %}
+    </div>
     TODO
 {% endblock %}
