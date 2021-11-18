@@ -36,6 +36,10 @@ class Lot(models.Model):
     def short_description(self):
         return truncate(self.description, 150, '')
 
+
+    def last_bet(self):
+        return self.bets.order_by('-amount').first()
+
     def __str__(self): 
         return f"{self.title} | {self.category}"
 
@@ -45,7 +49,6 @@ class Bet(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='bets')
     amount = models.DecimalField(max_digits=6, decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)
-
 
 class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comments')

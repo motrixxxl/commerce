@@ -6,9 +6,25 @@
             <div class="lot-image">{{ lot.image }}</div>
             <div><h2>{{ lot.title }}</h2></div>
         </div>
-        
+
+        {% if last_bet == None %}
+            <div>{{ lot.min_amount }}</div>
+        {% else %}
+            <div>{{ last_bet.amount }}</div>
+        {% endif %}
+
+        <form action="{% url 'lot' lot.id %}" method="post">
+            {% csrf_token %}
+            <input type="number" name="bet" id="bet" value="{{ next_bet_amount }}" min="{{ next_bet_amount }}"/>
+            <div>{{ lot.currency }}</div>
+            <input type="submit" value="Set bet"/>
+        </form>
+        <form action="" method="post">
+            <input type="submit" value="Add to Watchlist" />
+        </form>
+
         <div>{{ lot.description }}</div>
-        <div>{{ lot.min_amount}}</div>
+
     </div>
     TODO
 {% endblock %}

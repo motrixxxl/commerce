@@ -1,12 +1,13 @@
 from django.contrib.auth import authenticate, login, logout
-from django.db import IntegrityError
+from django.db import IntegrityError, connections
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
 from django.shortcuts import render
 from django.urls import reverse
 from django.core.exceptions import ObjectDoesNotExist
 
-from .models import User, Lot
+from .models import Bet, User, Lot
 
+min_bet = 5
 
 def index(request):
     return render(request, "auctions/index.html", {
@@ -68,8 +69,23 @@ def register(request):
 def lot(request, lot_id):
     try:
         lot = Lot.objects.get(pk=lot_id)
+        if request.method == 'POST':
+            new_bet = Bet()
+            new_bet.lot = lot
+            new_bet.amount = request.POST["bet"]
+            new_bet.user = request.user
+            new_bet.save()
+        
+        last_bet = lot.bets.order_by('-amount').first()
+        next_bet_amount = lot.min_amount
+
+        if last_bet is not None:
+            next_bet_amount = last_bet.amount
+
     except ObjectDoesNotExist:
         return HttpResponseNotFound('<h1>Page not found</h1>')
     return render(request, "auctions/lot.html", {
-        "lot": lot
+        "lot": lot,
+        "last_bet": last_bet,
+        "next_bet_amount": next_bet_amount + min_bet,
     })

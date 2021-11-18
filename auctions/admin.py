@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Comment, Watchlist, Lot, Notification, User, Category, Currency
+from .models import Comment, Watchlist, Lot, Notification, User, Category, Currency, Bet
 
 # Register your models here.
 class UserAdmin(admin.ModelAdmin):
@@ -18,3 +18,4 @@ admin.site.register(Notification)
 admin.site.register(Lot)
 admin.site.register(Category)
 admin.site.register(Currency)
+admin.site.register(Bet)
