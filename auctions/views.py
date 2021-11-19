@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.core.exceptions import ObjectDoesNotExist
 
-from .models import Bet, User, Lot, Watchlist
+from .models import Bet, User, Lot, Watchlist, Comment
 
 min_bet = 5
 
@@ -66,38 +66,78 @@ def register(request):
     else:
         return render(request, "auctions/register.html")
 
+
 def lot(request, lot_id):
     try:
         lot = Lot.objects.get(pk=lot_id)
-        if request.method == 'POST':
-            new_bet = Bet()
-            new_bet.lot = lot
-            new_bet.amount = request.POST["bet"]
-            new_bet.user = request.user
-            new_bet.save()
-
+        comments = lot.comments.order_by('-created_at').all()
         last_bet = lot.bets.order_by('-amount').first()
         next_bet_amount = lot.min_amount
 
         if last_bet is not None:
             next_bet_amount = last_bet.amount
 
-        if lot.watchlist.filter(user=request.user, lot=lot_id):
-            HttpResponse('exists')
+        if request.user.is_authenticated:
+            is_watchlisted = Watchlist.objects.filter(user=request.user, lot_id=lot_id).exists()
+        else:
+            is_watchlisted = True
+
     except ObjectDoesNotExist:
         return HttpResponseNotFound('<h1>Page not found</h1>')
     return render(request, "auctions/lot.html", {
         "lot": lot,
+        "comments": comments,
         "last_bet": last_bet,
         "next_bet_amount": next_bet_amount + min_bet,
+        "is_watchlisted": is_watchlisted,
     })
+
+
+def bet(request, lot_id):
+    if request.method == 'POST':
+        lot = Lot.objects.get(pk=lot_id)
+        new_bet = Bet()
+        new_bet.lot = lot
+        new_bet.amount = request.POST["bet"]
+        new_bet.user = request.user
+        new_bet.save()
+
+    return HttpResponseRedirect(reverse('lot', kwargs={'lot_id': lot_id}))
+
 
 def watchlist(request, lot_id):
     if request.method == 'POST':
-        list = Watchlist()
-        list.user = request.user
-        list.lot = Lot.objects.get(pk=lot_id)
-        list.save()
+
+        if request.POST["__method"] == 'PUT':
+            if not Watchlist.objects.filter(user=request.user, lot_id=lot_id).exists():
+                list = Watchlist()
+                list.user = request.user
+                list.lot = Lot.objects.get(pk=lot_id)
+                list.save()
+        if request.POST["__method"] == 'DELETE':
+            item = Watchlist.objects.filter(user=request.user, lot_id=lot_id)
+            item.delete()
+
         return HttpResponseRedirect(reverse('lot', kwargs={'lot_id': lot_id}))
     else:
         return render(request, 'auctions/watchlist.html')
+
+
+def comment(request, lot_id):
+    if request.method == 'POST':
+        lot = Lot.objects.get(pk=lot_id)
+        comment = Comment()
+        comment.lot = lot
+        comment.message = request.POST["message"]
+        comment.user = request.user
+        comment.save()
+
+    return HttpResponseRedirect(reverse('lot', kwargs={'lot_id': lot_id}))
+
+
+def addlot(request):
+    if request.method == "POST":
+        lot_id = 1
+        return HttpResponseRedirect(reverse('lot', kwargs={'lot_id': lot_id}))
+
+    return render(request, 'auctions/new_lot.html')
