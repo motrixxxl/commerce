@@ -10,7 +10,7 @@
                 <div class="item-image">{{ lot.image }}</div>
                 <div><h3>{{ lot.title }}</h1></div>
                 <div>{{ lot.short_description }}<a class="link" href="{% url 'lot' lot.id %}">...</a></div>
-                <div>{{ lot.last_bet.amount }} {{ lot.currency }}</div>
+                <div>{{ lot.last_bet_amount }} {{ lot.currency }}</div>
             </div>
         </div>
     {% endfor %}

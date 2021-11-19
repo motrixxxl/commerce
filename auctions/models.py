@@ -36,9 +36,12 @@ class Lot(models.Model):
     def short_description(self):
         return truncate(self.description, 150, '')
 
-
-    def last_bet(self):
-        return self.bets.order_by('-amount').first()
+    def last_bet_amount(self):
+        bet = self.bets.order_by('-amount').first()
+        if bet is not None:
+            return bet.amount
+        else:
+            return self.min_amount
 
     def __str__(self): 
         return f"{self.title} | {self.category}"

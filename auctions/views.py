@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.core.exceptions import ObjectDoesNotExist
 
-from .models import Bet, User, Lot
+from .models import Bet, User, Lot, Watchlist
 
 min_bet = 5
 
@@ -75,13 +75,15 @@ def lot(request, lot_id):
             new_bet.amount = request.POST["bet"]
             new_bet.user = request.user
             new_bet.save()
-        
+
         last_bet = lot.bets.order_by('-amount').first()
         next_bet_amount = lot.min_amount
 
         if last_bet is not None:
             next_bet_amount = last_bet.amount
 
+        if lot.watchlist.filter(user=request.user, lot=lot_id):
+            HttpResponse('exists')
     except ObjectDoesNotExist:
         return HttpResponseNotFound('<h1>Page not found</h1>')
     return render(request, "auctions/lot.html", {
@@ -89,3 +91,13 @@ def lot(request, lot_id):
         "last_bet": last_bet,
         "next_bet_amount": next_bet_amount + min_bet,
     })
+
+def watchlist(request, lot_id):
+    if request.method == 'POST':
+        list = Watchlist()
+        list.user = request.user
+        list.lot = Lot.objects.get(pk=lot_id)
+        list.save()
+        return HttpResponseRedirect(reverse('lot', kwargs={'lot_id': lot_id}))
+    else:
+        return render(request, 'auctions/watchlist.html')

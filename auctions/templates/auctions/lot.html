@@ -1,5 +1,9 @@
 {% extends "auctions/layout.html" %}
 
+<script type="text/javascript" charset="utf-8">
+    document.
+</script>
+
 {% block body %}
     <div>
         <div class="row">
@@ -19,7 +23,8 @@
             <div>{{ lot.currency }}</div>
             <input type="submit" value="Set bet"/>
         </form>
-        <form action="" method="post">
+        <form action="{% url 'watchlist' lot.id %}" method="post">
+            {% csrf_token %}
             <input type="submit" value="Add to Watchlist" />
         </form>
 
