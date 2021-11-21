@@ -1,0 +1,33 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+    <div class="new-lot">
+        <form action="{% url 'addlot' %}" method="post" accept-charset="utf-8">
+            {% csrf_token %}
+            {{ form }}
+            <label for="title">Lots Name</label>
+            <input type="text" name="title" id="title" value="" />
+            <label for="image">Image</label>
+            <input type="url" name="image" id="image" value="" />
+            <label for="description">Description</label>
+            <input type="text" name="description" id="description" value="" />
+            <label for="min_amount">Amount</label>
+            <input type="number" name="min_amount" id="min_amount" value="" />
+            <select name="currency" id="currency">
+                <option value="EUR">EUR</option>
+                <option value="USD">USD</option>
+            </select>
+            <select name="category" id="category">
+                <option value="0">Книги</option>
+                <option value="1">Телефони</option>
+            </select>
+            <select name="state" id="state">
+                <option value="0">inactive</option>
+                <option value="1">active</option>
+                <option value="2">closed</option>
+            </select>
+        </form>
+    </div>
+
+{% endblock %}

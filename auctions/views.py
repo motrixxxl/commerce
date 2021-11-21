@@ -5,6 +5,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.core.exceptions import ObjectDoesNotExist
 
+from .forms import LotForm
 from .models import Bet, User, Lot, Watchlist, Comment
 
 min_bet = 5
@@ -140,4 +141,6 @@ def addlot(request):
         lot_id = 1
         return HttpResponseRedirect(reverse('lot', kwargs={'lot_id': lot_id}))
 
-    return render(request, 'auctions/new_lot.html')
+    return render(request, 'auctions/new_lot.html', {
+        "form": LotForm,
+    })
