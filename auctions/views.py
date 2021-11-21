@@ -6,7 +6,7 @@ from django.urls import reverse
 from django.core.exceptions import ObjectDoesNotExist
 
 from .forms import LotForm
-from .models import Bet, User, Lot, Watchlist, Comment
+from .models import Bet, Category, Currency, User, Lot, Watchlist, Comment
 
 min_bet = 5
 
@@ -138,8 +138,25 @@ def comment(request, lot_id):
 
 def addlot(request):
     if request.method == "POST":
-        lot_id = 1
-        return HttpResponseRedirect(reverse('lot', kwargs={'lot_id': lot_id}))
+        form = LotForm(request.POST)
+        if form.is_valid():
+            lot = Lot()
+            lot.user = request.user
+            lot.title = request.POST['title']
+            lot.image = request.POST['image']
+            lot.description = request.POST['description']
+            lot.category = Category.objects.get(pk=int(request.POST['category']))
+            lot.min_amount = request.POST['min_amount']
+            lot.currency = Currency.objects.get(pk=int(request.POST['currency']))
+            lot.state = request.POST['state']
+            lot.save()
+            lot_id = lot.id
+            return HttpResponseRedirect(reverse('lot', kwargs={'lot_id': lot_id}))
+        else:
+            return render(request, 'auctions/new_lot.html', {
+                "form": LotForm,
+                "errors": form.as_ul(),
+            })
 
     return render(request, 'auctions/new_lot.html', {
         "form": LotForm,
