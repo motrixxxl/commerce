@@ -1,29 +1,15 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    <div>
-        <div class="row">
-            <div class="lot-image">{{ lot.image }}</div>
-            <div><h2>{{ lot.title }}</h2></div>
+    <div class="lot">
+
+        <div class="lot-image">
+            <img src="{{ lot.image }}" />
         </div>
-
-        {% if last_bet == None %}
-            <div>{{ lot.min_amount }} {{ lot.currency }}</div>
-        {% else %}
-            <div>{{ last_bet.amount }} {{ lot.currency }}</div>
-        {% endif %}
+        <div><h2>{{ lot.title }}</h2></div>
 
         {% if user.is_authenticated %}
-        <form action="{% url 'bet' lot.id %}" method="post">
-            {% csrf_token %}
-            <input type="number" name="bet" id="bet" value="{{ next_bet_amount }}" min="{{ next_bet_amount }}"/>
-            <div>{{ lot.currency }}</div>
-            <input type="submit" value="Set bet"/>
-        </form>
-        {% endif %}
-
-        {% if user.is_authenticated %}
-        <form action="{% url 'watchlist' lot.id %}" method="post">
+        <form action="{% url 'watchlist' lot.id %}" method="post" class="form">
             {% csrf_token %}
             {% if not is_watchlisted %}
                 <input type="hidden" name="__method" value="PUT" />
@@ -35,21 +21,37 @@
         </form>
         {% endif %}
 
-        <div>{{ lot.description }}</div>
+        {% if last_bid == None %}
+            <div>{{ lot.min_amount }} {{ lot.currency }}</div>
+        {% else %}
+            <div>{{ last_bid.amount }} {{ lot.currency }}</div>
+        {% endif %}
 
-    </div>
-
-    <h3>Comments</h3>
-    <div class="comments">
         {% if user.is_authenticated %}
-        <form action="{% url 'comment' lot.id %}" method="post">
+        <form action="{% url 'bid' lot.id %}" method="post" class="form">
             {% csrf_token %}
-            <input type="text" name="message" />
-            <input type="submit" value="Add comment" />
+            <input type="number" name="bid" id="bid" value="{{ next_bid_amount }}" min="{{ next_bid_amount }}"/>
+            <div>{{ lot.currency }}</div>
+            <input type="submit" value="Place Bid"/>
         </form>
         {% endif %}
-        {% for comment in comments %}
-            <div class="comment">{{ comment.created_at }}> {{ comment.message }}</div>
-        {% endfor %}
+
+        <div class="description">{{ lot.description }}</div>
+
+        <h3>Comments</h3>
+        <div class="comments">
+            {% if user.is_authenticated %}
+            <form action="{% url 'comment' lot.id %}" method="post" class="form">
+                {% csrf_token %}
+                <input type="text" name="message" />
+                <input type="submit" value="Add comment" />
+            </form>
+            {% endif %}
+            {% for comment in comments %}
+                <div class="comment">{{ comment.created_at }}> {{ comment.message }}</div>
+            {% endfor %}
+        </div>
+
     </div>
+    
 {% endblock %}

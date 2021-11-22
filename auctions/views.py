@@ -6,9 +6,9 @@ from django.urls import reverse
 from django.core.exceptions import ObjectDoesNotExist
 
 from .forms import LotForm
-from .models import Bet, Category, Currency, User, Lot, Watchlist, Comment
+from .models import Bid, Category, Currency, User, Lot, Watchlist, Comment
 
-min_bet = 5
+min_bid = 1
 
 def index(request):
     return render(request, "auctions/index.html", {
@@ -72,11 +72,11 @@ def lot(request, lot_id):
     try:
         lot = Lot.objects.get(pk=lot_id)
         comments = lot.comments.order_by('-created_at').all()
-        last_bet = lot.bets.order_by('-amount').first()
-        next_bet_amount = lot.min_amount
+        last_bid = lot.bids.order_by('-amount').first()
+        next_bid_amount = lot.min_amount
 
-        if last_bet is not None:
-            next_bet_amount = last_bet.amount
+        if last_bid is not None:
+            next_bid_amount = last_bid.amount
 
         if request.user.is_authenticated:
             is_watchlisted = Watchlist.objects.filter(user=request.user, lot_id=lot_id).exists()
@@ -88,20 +88,20 @@ def lot(request, lot_id):
     return render(request, "auctions/lot.html", {
         "lot": lot,
         "comments": comments,
-        "last_bet": last_bet,
-        "next_bet_amount": next_bet_amount + min_bet,
+        "last_bid": last_bid,
+        "next_bid_amount": next_bid_amount + min_bid,
         "is_watchlisted": is_watchlisted,
     })
 
 
-def bet(request, lot_id):
+def bid(request, lot_id):
     if request.method == 'POST':
         lot = Lot.objects.get(pk=lot_id)
-        new_bet = Bet()
-        new_bet.lot = lot
-        new_bet.amount = request.POST["bet"]
-        new_bet.user = request.user
-        new_bet.save()
+        new_bid = Bid()
+        new_bid.lot = lot
+        new_bid.amount = request.POST["bid"]
+        new_bid.user = request.user
+        new_bid.save()
 
     return HttpResponseRedirect(reverse('lot', kwargs={'lot_id': lot_id}))
 
@@ -152,12 +152,9 @@ def addlot(request):
             lot.save()
             lot_id = lot.id
             return HttpResponseRedirect(reverse('lot', kwargs={'lot_id': lot_id}))
-        else:
-            return render(request, 'auctions/new_lot.html', {
-                "form": LotForm,
-                "errors": form.as_ul(),
-            })
+    else:
+        form = LotForm()
 
     return render(request, 'auctions/new_lot.html', {
-        "form": LotForm,
+        "form": form,
     })

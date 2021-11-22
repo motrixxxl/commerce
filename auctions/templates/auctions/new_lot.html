@@ -3,14 +3,16 @@
 {% block body %}
 
     <div class="new-lot">
+
         {% if errors is not None %}
             {{ errors }}
         {% endif %}
-        <form action="{% url 'addlot' %}" method="post" accept-charset="utf-8">
+        <form action="{% url 'addlot' %}" method="post" accept-charset="utf-8" id="new-lot">
             {% csrf_token %}
             {{ form }}
-            <input type="submit" value="Add New Lot" />
+            <input type="submit" value="Add New Lot" id="btn-add" />
         </form>
+
     </div>
 
 {% endblock %}

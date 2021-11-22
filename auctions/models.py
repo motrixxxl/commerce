@@ -36,10 +36,10 @@ class Lot(models.Model):
     def short_description(self):
         return truncate(self.description, 150, '')
 
-    def last_bet_amount(self):
-        bet = self.bets.order_by('-amount').first()
-        if bet is not None:
-            return bet.amount
+    def last_bid_amount(self):
+        bid = self.bids.order_by('-amount').first()
+        if bid is not None:
+            return bid.amount
         else:
             return self.min_amount
 
@@ -47,9 +47,9 @@ class Lot(models.Model):
         return f"{self.title} | {self.category}"
 
 
-class Bet(models.Model):
-    lot = models.ForeignKey(Lot, on_delete=models.CASCADE, related_name='bets')
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='bets')
+class Bid(models.Model):
+    lot = models.ForeignKey(Lot, on_delete=models.CASCADE, related_name='bids')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='bids')
     amount = models.DecimalField(max_digits=6, decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)
 

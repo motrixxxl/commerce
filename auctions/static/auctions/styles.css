@@ -11,14 +11,60 @@ body {
     border-radius: 5px;
     background-color: rgb(222, 243, 255);
     padding: 10px;
-    height: 400px;
+    height: 500px;
     cursor: pointer;
 }
 
 .item-image {
+    text-align: center;
+}
 
+.item-image img{
+    height: 15rem;
 }
 
 .cell {
     padding: 3px;
+}
+
+#new-lot {
+    display: grid;
+}
+
+div.new-lot {
+    padding: 0 1rem 0 1rem;
+}
+
+div.new-lot label {
+    margin: 1rem 0 0 0;
+    font-size: 1.5rem;
+}
+
+div.new-lot input, div.new-lot select, div.new-lot textarea {
+    font-size: 20px;
+}
+
+.errorlist {
+    color: crimson;
+}
+
+#btn-add {
+    margin: 25px 0 15px 0;
+}
+
+form.form {
+    display: flex;
+}
+
+div.lot {
+    margin: 1rem;
+}
+
+.lot form {
+    margin: 15px 0 15px 0;
+}
+
+.description {
+    border: 1px solid lightgrey;
+    padding: 1rem;
 }
