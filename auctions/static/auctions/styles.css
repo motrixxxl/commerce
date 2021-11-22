@@ -4,6 +4,8 @@ body {
 
 .lots {
     margin: 0;
+    height: auto;
+    padding: 0 0 5px 0;
 }
   
 .item {
@@ -11,8 +13,13 @@ body {
     border-radius: 5px;
     background-color: rgb(222, 243, 255);
     padding: 10px;
-    height: 500px;
+    height: auto;
+    max-height: 600px;
     cursor: pointer;
+}
+
+.item label {
+    font-weight: 600;
 }
 
 .item-image {
@@ -62,6 +69,11 @@ div.lot {
 
 .lot form {
     margin: 15px 0 15px 0;
+}
+
+.lot-image img {
+    width: 100%;
+    max-width: 500px;
 }
 
 .description {

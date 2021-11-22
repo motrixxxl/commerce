@@ -12,10 +12,11 @@
                 </div>
                 <div><h3>{{ lot.title }}</h1></div>
                 <div>{{ lot.short_description }}<a class="link" href="{% url 'lot' lot.id %}">...</a></div>
-                <div>{{ lot.last_bid_amount }} {{ lot.currency }}</div>
+                <div><label>Price:</label> {{ lot.last_bid_amount }} {{ lot.currency }}</div>
+                <div><label>Created</label> {{ lot.created_at }}</div>
             </div>
         </div>
     {% endfor %}
     </div>
-    TODO
+
 {% endblock %}
