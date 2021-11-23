@@ -1,0 +1,22 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>My Lots</h2>
+
+    <div class="row lots">
+    {% for lot in lots %}
+        <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12 cell" onclick="window.location='{% url 'lot' lot.id %}'">
+            <div class="item" data-id="{{ lot.id }}">
+                <div class="item-image">
+                    <img src="{{ lot.image }}" />
+                </div>
+                <div><h3>{{ lot.title }}</h1></div>
+                <div>{{ lot.short_description }}<a class="link" href="{% url 'lot' lot.id %}">...</a></div>
+                <div><label>Price:</label> {{ lot.last_bid_amount }} {{ lot.currency }}</div>
+                <div><label>Created</label> {{ lot.created_at }}</div>
+            </div>
+        </div>
+    {% endfor %}
+    </div>
+
+{% endblock %}

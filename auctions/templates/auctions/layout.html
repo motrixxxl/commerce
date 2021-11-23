@@ -26,9 +26,21 @@
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'index' %}">Active Listings</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'categories' %}">Categories</a>
+            </li>
             {% if user.is_authenticated %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'addlot' %}">Add Lot</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'mylots' %}">My Lots</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'mybids' %}">My Bids</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'watchlist' %}">Watchlist</a>
                 </li>
             {% endif %}
             {% if user.is_authenticated %}

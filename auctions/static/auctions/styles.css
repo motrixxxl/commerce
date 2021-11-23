@@ -14,7 +14,7 @@ body {
     background-color: rgb(222, 243, 255);
     padding: 10px;
     height: auto;
-    max-height: 600px;
+    max-height: 35rem;
     cursor: pointer;
 }
 
@@ -73,10 +73,45 @@ div.lot {
 
 .lot-image img {
     width: 100%;
-    max-width: 500px;
+    max-width: 20rem;
 }
 
 .description {
-    border: 1px solid lightgrey;
     padding: 1rem;
+}
+
+.current-bid {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+input[name="message"] {
+    width: 100%;
+}
+
+div.comment {
+    background-color: rgb(250,250,250);
+    padding: 0 0 0.2rem 1rem;
+}
+
+@media (max-width: 700px) {
+    div.lot-image {
+        text-align: center;
+    }
+}
+
+#bid {
+    width: 100%;
+    max-width: 100px;
+}
+
+.you-win {
+    font-weight: 700;
+    color: red;
+}
+
+#you-win {
+    color: white;
+    background-color: blue;
+    font-weight: 600;
 }

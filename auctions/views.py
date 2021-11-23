@@ -6,7 +6,7 @@ from django.urls import reverse
 from django.core.exceptions import ObjectDoesNotExist
 
 from .forms import LotForm
-from .models import Bid, Category, Currency, User, Lot, Watchlist, Comment
+from .models import Bid, Category, Currency, Notification, User, Lot, Watchlist, Comment
 
 min_bid = 1
 
@@ -72,8 +72,17 @@ def lot(request, lot_id):
     try:
         lot = Lot.objects.get(pk=lot_id)
         comments = lot.comments.order_by('-created_at').all()
+        bids_count = lot.bids.count()
         last_bid = lot.bids.order_by('-amount').first()
+
+        is_owner_last_bid = False
+        if last_bid and last_bid.user.id == request.user.id:
+            is_owner_last_bid = True
         next_bid_amount = lot.min_amount
+
+        is_owner = False
+        if lot.user.id == request.user.id:
+            is_owner = True
 
         if last_bid is not None:
             next_bid_amount = last_bid.amount
@@ -91,12 +100,17 @@ def lot(request, lot_id):
         "last_bid": last_bid,
         "next_bid_amount": next_bid_amount + min_bid,
         "is_watchlisted": is_watchlisted,
+        "bids_count": bids_count,
+        "is_owner_last_bid": is_owner_last_bid,
+        "is_owner": is_owner,
     })
 
 
 def bid(request, lot_id):
     if request.method == 'POST':
         lot = Lot.objects.get(pk=lot_id)
+        if lot.user.id == request.user.id:
+            return HttpResponse(status=500)
         new_bid = Bid()
         new_bid.lot = lot
         new_bid.amount = request.POST["bid"]
@@ -106,7 +120,7 @@ def bid(request, lot_id):
     return HttpResponseRedirect(reverse('lot', kwargs={'lot_id': lot_id}))
 
 
-def watchlist(request, lot_id):
+def addwatchlist(request, lot_id):
     if request.method == 'POST':
 
         if request.POST["__method"] == 'PUT':
@@ -157,4 +171,61 @@ def addlot(request):
 
     return render(request, 'auctions/new_lot.html', {
         "form": form,
+    })
+
+
+def watchlist(request):
+    watchlist = Watchlist.objects.filter(user=request.user)
+    return render(request, 'auctions/watchlist.html', {
+        "watchlist": watchlist
+    })
+
+
+def mylots(request):
+    return render(request, 'auctions/mylots.html', {
+        'lots': Lot.objects.filter(user=request.user).all()
+    })
+
+
+def close(request, lot_id):
+    if request.method == 'POST':
+        lot = Lot.objects.get(user=request.user, pk=lot_id)
+        if lot is None:
+            return HttpResponse(status=500)
+        lot.state = 2
+        lot.save()
+
+        last_bid = lot.bids.order_by('-amount').first()
+        if last_bid is not None:
+            # bid is win
+            last_bid.status = 1
+            last_bid.save()
+
+            notification = Notification()
+            notification.user = last_bid.user
+            notification.lot = lot
+            # win auction
+            notification.type = 1
+            # notification unread
+            notification.state = 1
+            notification.save()
+
+    return HttpResponseRedirect(reverse('lot', kwargs={'lot_id': lot_id}))
+
+
+def mybids(request):
+    return render(request, "auctions/mybids.html", {
+        "bids": Bid.objects.order_by('-amount').filter(user_id=request.user.id)
+    })
+
+
+def categories(request):
+    return render(request, "auctions/categories.html", {
+        "categories": Category.objects.all()
+    })
+
+
+def category(request, category_id):
+    return render(request, "auctions/index.html", {
+        "lots": Lot.objects.filter(category_id=category_id, state=1).all()
     })

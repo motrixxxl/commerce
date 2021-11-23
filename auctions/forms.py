@@ -35,5 +35,5 @@ class LotForm(forms.Form):
     field_order = ['title', 'category', 'image', 'description', 'min_amount', 'currency', 'state']
 
     labels = {
-        'min_amount': 'Start amount',
+        'min_amount': 'Start Bid',
     }

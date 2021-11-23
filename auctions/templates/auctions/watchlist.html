@@ -1,0 +1,22 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Watchlist</h2>
+
+    <div class="row lots">
+    {% for item in watchlist %}
+        <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12 cell" onclick="window.location='{% url 'lot' item.lot.id %}'">
+            <div class="item" data-id="{{ item.lot.id }}">
+                <div class="item-image">
+                    <img src="{{ item.lot.image }}" />
+                </div>
+                <div><h3>{{ item.lot.title }}</h1></div>
+                <div>{{ item.lot.short_description }}<a class="link" href="{% url 'lot' item.lot.id %}">...</a></div>
+                <div><label>Price:</label> {{ item.lot.last_bid_amount }} {{ item.lot.currency }}</div>
+                <div><label>Created</label> {{ item.lot.created_at }}</div>
+            </div>
+        </div>
+    {% endfor %}
+    </div>
+
+{% endblock %}

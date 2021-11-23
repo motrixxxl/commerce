@@ -1,0 +1,16 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>My Bids</h2>
+
+    {% for bid in bids %}
+        <div class="comment">
+            {{ bid.created_at }}> <a href="{% url 'lot' bid.lot.id %}">{{ bid.lot }}</a>
+            <span>{{ bid.amount }} {{ bid.lot.currency }}</span>
+            {% if bid.status == 1%}
+            <span class="you-win">You Win</span>
+            {% endif %}
+        </div>
+    {% endfor %}
+
+{% endblock %}

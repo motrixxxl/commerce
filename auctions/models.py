@@ -51,6 +51,7 @@ class Bid(models.Model):
     lot = models.ForeignKey(Lot, on_delete=models.CASCADE, related_name='bids')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='bids')
     amount = models.DecimalField(max_digits=6, decimal_places=2)
+    status = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
 
 class Comment(models.Model):

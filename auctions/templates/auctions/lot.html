@@ -9,7 +9,7 @@
         <div><h2>{{ lot.title }}</h2></div>
 
         {% if user.is_authenticated %}
-        <form action="{% url 'watchlist' lot.id %}" method="post" class="form">
+        <form action="{% url 'addwatchlist' lot.id %}" method="post" class="form">
             {% csrf_token %}
             {% if not is_watchlisted %}
                 <input type="hidden" name="__method" value="PUT" />
@@ -21,20 +21,44 @@
         </form>
         {% endif %}
 
-        {% if last_bid == None %}
-            <div>{{ lot.min_amount }} {{ lot.currency }}</div>
-        {% else %}
-            <div>{{ last_bid.amount }} {{ lot.currency }}</div>
-        {% endif %}
+        <div class="current-bid">
+            {% if last_bid == None %}
+                {{ lot.min_amount }} {{ lot.currency }}
+            {% else %}
+                {{ last_bid.amount }} {{ lot.currency }}
+            {% endif %}
+        </div>
+        <div>
+            {{ bids_count }} bid(s) so far.
+            {% if is_owner_last_bid %}
+                Your bid is the current bid.
+            {% endif %}
+        </div>
 
         {% if user.is_authenticated %}
-        <form action="{% url 'bid' lot.id %}" method="post" class="form">
-            {% csrf_token %}
-            <input type="number" name="bid" id="bid" value="{{ next_bid_amount }}" min="{{ next_bid_amount }}"/>
-            <div>{{ lot.currency }}</div>
-            <input type="submit" value="Place Bid"/>
-        </form>
+            {% if is_owner %}
+                {% if lot.state == 2 %}
+                    <input type="submit" value="Auction Closed" disabled />
+                {% else %}
+                <form action="{% url 'close' lot.id %}" method="post" class="form">
+                    {% csrf_token %}
+                    <input type="submit" value="Close Auction" />
+                </form>
+                {% endif %}
+            {% elif lot.state == 1 %}
+            <form action="{% url 'bid' lot.id %}" method="post" class="form bid">
+                {% csrf_token %}
+                <input type="number" name="bid" id="bid" value="{{ next_bid_amount }}" min="{{ next_bid_amount }}"/>
+                <input type="submit" value="Place Bid" class="bid-btn" />
+            </form>
+            {% else %}
+                {% if last_bid.user.id == request.user.id %}
+                <input type="submit" value="You Win" disabled id="you-win"/>
+                {% endif %}
+            {% endif %}
         {% endif %}
+
+
 
         <h3>Details</h3>
         <div class="description">{{ lot.description }}</div>
