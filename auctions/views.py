@@ -4,6 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
 from django.shortcuts import render
 from django.urls import reverse
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth.decorators import login_required
 
 from .forms import LotForm
 from .models import Bid, Category, Currency, Notification, User, Lot, Watchlist, Comment
@@ -106,6 +107,7 @@ def lot(request, lot_id):
     })
 
 
+@login_required(login_url='/login')
 def bid(request, lot_id):
     if request.method == 'POST':
         lot = Lot.objects.get(pk=lot_id)
@@ -120,6 +122,7 @@ def bid(request, lot_id):
     return HttpResponseRedirect(reverse('lot', kwargs={'lot_id': lot_id}))
 
 
+@login_required(login_url='/login')
 def addwatchlist(request, lot_id):
     if request.method == 'POST':
 
@@ -138,6 +141,7 @@ def addwatchlist(request, lot_id):
         return render(request, 'auctions/watchlist.html')
 
 
+@login_required(login_url='/login')
 def comment(request, lot_id):
     if request.method == 'POST':
         lot = Lot.objects.get(pk=lot_id)
@@ -150,6 +154,7 @@ def comment(request, lot_id):
     return HttpResponseRedirect(reverse('lot', kwargs={'lot_id': lot_id}))
 
 
+@login_required(login_url='/login')
 def addlot(request):
     if request.method == "POST":
         form = LotForm(request.POST)
@@ -174,6 +179,7 @@ def addlot(request):
     })
 
 
+@login_required(login_url='/login')
 def watchlist(request):
     watchlist = Watchlist.objects.filter(user=request.user)
     return render(request, 'auctions/watchlist.html', {
@@ -181,12 +187,14 @@ def watchlist(request):
     })
 
 
+@login_required(login_url='/login')
 def mylots(request):
     return render(request, 'auctions/mylots.html', {
         'lots': Lot.objects.filter(user=request.user).all()
     })
 
 
+@login_required(login_url='/login')
 def close(request, lot_id):
     if request.method == 'POST':
         lot = Lot.objects.get(user=request.user, pk=lot_id)
@@ -213,6 +221,7 @@ def close(request, lot_id):
     return HttpResponseRedirect(reverse('lot', kwargs={'lot_id': lot_id}))
 
 
+@login_required(login_url='/login')
 def mybids(request):
     return render(request, "auctions/mybids.html", {
         "bids": Bid.objects.order_by('-amount').filter(user_id=request.user.id)
