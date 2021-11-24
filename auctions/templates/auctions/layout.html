@@ -38,6 +38,11 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'mybids' %}">My Bids</a>
+                    {% if bids_notifications > 0 %}
+                    <a href="{% url 'read' %}">
+                    <div id="msg-count">{{ bids_notifications }}</div>
+                    </a>
+                    {% endif %}
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'watchlist' %}">Watchlist</a>

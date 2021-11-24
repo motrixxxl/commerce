@@ -3,10 +3,11 @@
 {% block body %}
     <div class="lot">
 
+        <div><h2>{{ lot.title }}</h2></div>
+
         <div class="lot-image">
             <img src="{{ lot.image }}" />
         </div>
-        <div><h2>{{ lot.title }}</h2></div>
 
         {% if user.is_authenticated %}
         <form action="{% url 'addwatchlist' lot.id %}" method="post" class="form">
@@ -29,7 +30,7 @@
             {% endif %}
         </div>
         <div>
-            {{ bids_count }} bid(s) so far.
+            {{ lot.bids.count }} bid(s) so far.
             {% if is_owner_last_bid %}
                 Your bid is the current bid.
             {% endif %}
@@ -59,8 +60,11 @@
         {% endif %}
 
 
-
         <h3>Details</h3>
+        <ul>
+            <li>Listed by: <a href="mailto:{{ lot.user.email }}">{{ lot.user.username }}</a></li>
+            <li>Category: {{ lot.category.name }}</li>
+        </ul>
         <div class="description">{{ lot.description }}</div>
 
         <h3>Comments</h3>

@@ -13,7 +13,8 @@ min_bid = 1
 
 def index(request):
     return render(request, "auctions/index.html", {
-        'lots': Lot.objects.filter(state=1).all()
+        "lots": Lot.objects.filter(state=1).all(),
+        "bids_notifications": getBidNotificationCount(request),
     })
 
 
@@ -73,7 +74,6 @@ def lot(request, lot_id):
     try:
         lot = Lot.objects.get(pk=lot_id)
         comments = lot.comments.order_by('-created_at').all()
-        bids_count = lot.bids.count()
         last_bid = lot.bids.order_by('-amount').first()
 
         is_owner_last_bid = False
@@ -101,9 +101,9 @@ def lot(request, lot_id):
         "last_bid": last_bid,
         "next_bid_amount": next_bid_amount + min_bid,
         "is_watchlisted": is_watchlisted,
-        "bids_count": bids_count,
         "is_owner_last_bid": is_owner_last_bid,
         "is_owner": is_owner,
+        "bids_notifications": getBidNotificationCount(request),
     })
 
 
@@ -138,7 +138,7 @@ def addwatchlist(request, lot_id):
 
         return HttpResponseRedirect(reverse('lot', kwargs={'lot_id': lot_id}))
     else:
-        return render(request, 'auctions/watchlist.html')
+        return HttpResponse(status=500)
 
 
 @login_required(login_url='/login')
@@ -176,6 +176,7 @@ def addlot(request):
 
     return render(request, 'auctions/new_lot.html', {
         "form": form,
+        "bids_notifications": getBidNotificationCount(request),
     })
 
 
@@ -183,14 +184,16 @@ def addlot(request):
 def watchlist(request):
     watchlist = Watchlist.objects.filter(user=request.user)
     return render(request, 'auctions/watchlist.html', {
-        "watchlist": watchlist
+        "watchlist": watchlist,
+        "bids_notifications": getBidNotificationCount(request),
     })
 
 
 @login_required(login_url='/login')
 def mylots(request):
     return render(request, 'auctions/mylots.html', {
-        'lots': Lot.objects.filter(user=request.user).all()
+        "lots": Lot.objects.filter(user=request.user).all(),
+        "bids_notifications": getBidNotificationCount(request),
     })
 
 
@@ -224,17 +227,29 @@ def close(request, lot_id):
 @login_required(login_url='/login')
 def mybids(request):
     return render(request, "auctions/mybids.html", {
-        "bids": Bid.objects.order_by('-amount').filter(user_id=request.user.id)
+        "bids": Bid.objects.order_by('-created_at','lot_id','-amount').filter(user_id=request.user.id),
+        "bids_notifications": getBidNotificationCount(request),
     })
 
 
 def categories(request):
     return render(request, "auctions/categories.html", {
-        "categories": Category.objects.all()
+        "categories": Category.objects.all(),
+        "bids_notifications": getBidNotificationCount(request),
     })
 
 
 def category(request, category_id):
     return render(request, "auctions/index.html", {
-        "lots": Lot.objects.filter(category_id=category_id, state=1).all()
+        "lots": Lot.objects.filter(category_id=category_id, state=1).all(),
+        "bids_notifications": getBidNotificationCount(request),
     })
+
+
+def getBidNotificationCount(request):
+    return Notification.objects.filter(user_id=request.user.id, state=1, type=1).all().count()
+
+
+def read(request):
+    Notification.objects.filter(user_id=request.user.id, state=1, type=1).update(state=0)
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
