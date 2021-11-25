@@ -25,7 +25,7 @@ SECRET_KEY = '6ps8j!crjgrxt34cqbqn7x&b3y%(fny8k8nh21+qa)%ws3fh!q'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['commerce0.herokuapp.com']
+ALLOWED_HOSTS = ['commerce0.herokuapp.com','127.0.0.1']
 
 
 # Application definition
@@ -119,7 +119,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
-SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
+SITE_ROOT = os.path.dirname(os.path.realpath(__file__)+'../auctions/')
 STATICFILES_DIRS = (
   os.path.join(SITE_ROOT, '../auctions/static/'),
 )
