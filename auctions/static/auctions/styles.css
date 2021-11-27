@@ -14,8 +14,8 @@ body {
     background-color: rgb(222, 243, 255);
     padding: 10px;
     height: auto;
-    max-height: 35rem;
     cursor: pointer;
+    overflow-wrap: anywhere;
 }
 
 .item label {
